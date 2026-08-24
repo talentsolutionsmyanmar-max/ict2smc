@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Badge } from "./badge";
 import { cn } from "@/lib/utils";
-import { fetchWatchlistFn } from "@/lib/desk/server/fns";
+import { loadWatchlist } from "@/lib/desk/load-tape";
 import { useDesk } from "@/lib/desk/store";
 import type { TickerRow } from "@/lib/desk/types";
 
@@ -21,10 +21,10 @@ export function Watchlist() {
   useEffect(() => {
     let dead = false;
     async function pull() {
-      const res = await fetchWatchlistFn();
+      const tickers = await loadWatchlist();
       if (dead) return;
-      if (res.ok) {
-        setRows(res.tickers);
+      if (tickers.length) {
+        setRows(tickers);
         setDelayed(false);
       } else setDelayed(true);
     }

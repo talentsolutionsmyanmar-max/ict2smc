@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { fireTradeAlarm } from "@/lib/desk/alarm";
 import { clockAt } from "@/lib/desk/session";
-import { scanMajorsFn } from "@/lib/desk/server/fns";
+import { loadRadar } from "@/lib/desk/load-tape";
 import { useDesk } from "@/lib/desk/store";
 
 export function MajorRadar() {
@@ -19,7 +19,7 @@ export function MajorRadar() {
       if (inFlight) return;
       inFlight = true;
       try {
-        const res = await scanMajorsFn();
+        const res = await loadRadar();
         if (dead || !res.ok) return;
         setRadar(res.hits);
         const clock = clockAt();

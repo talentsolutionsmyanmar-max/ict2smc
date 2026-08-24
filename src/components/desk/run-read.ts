@@ -3,7 +3,8 @@ import { fireTradeAlarm } from "@/lib/desk/alarm";
 import { barTape, closedBars } from "@/lib/desk/ict";
 import { mechanicalRead, mergeGrok, tapePrompt } from "@/lib/desk/mechanical";
 import { auditFrom, openRiskOf } from "@/lib/desk/regime";
-import { analyzeTapeFn, analyzeVisionFn, fetchTapeFn, mechFlags } from "@/lib/desk/server/fns";
+import { loadTape } from "@/lib/desk/load-tape";
+import { analyzeTapeFn, analyzeVisionFn, mechFlags } from "@/lib/desk/server/fns";
 import { useDesk } from "@/lib/desk/store";
 import type { Analysis, Tape, Timeframe } from "@/lib/desk/types";
 
@@ -48,10 +49,10 @@ async function freshTape(symbol: string): Promise<Tape | null> {
   if (current && current.symbol.replace(/[^A-Z0-9]/g, "") === key && Date.now() - current.at < 45000) {
     return current;
   }
-  const res = await fetchTapeFn({ data: { symbol } });
-  if (res?.ok) {
-    useDesk.getState().setTape(res.tape);
-    return res.tape;
+  const tape = await loadTape(symbol);
+  if (tape) {
+    useDesk.getState().setTape(tape);
+    return tape;
   }
   return current;
 }

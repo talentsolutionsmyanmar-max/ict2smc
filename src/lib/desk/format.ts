@@ -2,6 +2,12 @@ export function pad2(n: number) {
   return n.toString().padStart(2, "0");
 }
 
+export function plain<T>(v: T): T {
+  return JSON.parse(
+    JSON.stringify(v, (_k, x) => (typeof x === "number" && !Number.isFinite(x) ? 0 : x ?? null)),
+  ) as T;
+}
+
 export function fmtPx(n: number) {
   if (!Number.isFinite(n) || n === 0) return "—";
   if (n >= 1000) return n.toFixed(1);

@@ -4,7 +4,7 @@ import { blankAnalysis, mechanicalRead, tapePrompt } from "../mechanical";
 import { barTape, scanRaid, sessionLevels } from "../ict";
 import type { Analysis, Tape, Timeframe } from "../types";
 import { fetchOkxTape, fetchWatchlist, scanMajors } from "./okx";
-import { G } from "../format";
+import { G, plain } from "../format";
 
 const analysisSchema = z.object({
   pair: z.string(),
@@ -119,7 +119,7 @@ export const fetchTapeFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     try {
       const tape = await fetchOkxTape(data.symbol);
-      return { ok: true as const, tape };
+      return { ok: true as const, tape: plain(tape) };
     } catch (err) {
       const message = err instanceof Error ? err.message : "Tape failed";
       return { ok: false as const, error: message };
@@ -129,7 +129,7 @@ export const fetchTapeFn = createServerFn({ method: "POST" })
 export const fetchWatchlistFn = createServerFn({ method: "GET" }).handler(async () => {
   try {
     const tickers = await fetchWatchlist();
-    return { ok: true as const, tickers };
+    return { ok: true as const, tickers: plain(tickers) };
   } catch {
     return { ok: false as const, tickers: [] as { symbol: string; price: number; changePct: number }[] };
   }
@@ -138,7 +138,7 @@ export const fetchWatchlistFn = createServerFn({ method: "GET" }).handler(async 
 export const scanMajorsFn = createServerFn({ method: "GET" }).handler(async () => {
   try {
     const hits = await scanMajors();
-    return { ok: true as const, hits };
+    return { ok: true as const, hits: plain(hits) };
   } catch (err) {
     const error = err instanceof Error ? err.message : "Radar failed";
     return { ok: false as const, hits: [], error };

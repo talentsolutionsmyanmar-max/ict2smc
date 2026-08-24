@@ -3,7 +3,7 @@ import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 import { fmtUsd } from "@/lib/desk/format";
 import { clockAt } from "@/lib/desk/session";
-import { fetchTapeFn } from "@/lib/desk/server/fns";
+import { loadTape } from "@/lib/desk/load-tape";
 import { useDesk } from "@/lib/desk/store";
 import { AnalysisCard } from "./analysis";
 import { SessionStrip } from "./clock";
@@ -78,11 +78,11 @@ function TapePoller() {
     let dead = false;
     async function pull() {
       try {
-        const res = await fetchTapeFn({ data: { symbol: pair } });
+        const tape = await loadTape(pair);
         if (dead) return;
-        if (res?.ok) {
-          setTape(res.tape);
-          tickMissed(res.tape.symbol, res.tape.mark);
+        if (tape) {
+          setTape(tape);
+          tickMissed(tape.symbol, tape.mark);
         }
       } catch {
         /* keep last */
