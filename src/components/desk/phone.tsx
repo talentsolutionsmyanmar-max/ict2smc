@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { G } from "@/lib/desk/format";
+import { fitPx } from "@/lib/desk/format";
 import { dockPreview, engineState, type EngineState } from "@/lib/desk/rail";
 import { clockAt } from "@/lib/desk/session";
 import { useDesk } from "@/lib/desk/store";
@@ -51,7 +51,7 @@ function Row({ k, v, tone }: { k: string; v: string; tone?: "warn" | "long" | "s
       <p className="font-mono text-kicker uppercase tracking-label text-subtle">{k}</p>
       <p
         className={cn(
-          "truncate font-mono text-num tabular-nums",
+          "font-mono text-num tabular-nums leading-snug",
           tone === "warn" ? "text-warn" : tone === "long" ? "text-long" : tone === "short" ? "text-short" : "text-fg",
         )}
       >
@@ -117,24 +117,27 @@ export function PhoneDesk({ onDesk }: { onDesk?: () => void }) {
 
   return (
     <div className="phone-desk" data-detent={detent} data-state={state}>
-      <header className="phone-status flex items-center justify-between gap-2 border-b border-border bg-surface px-3">
-        <div className="min-w-0">
-          <p className="font-mono text-kicker uppercase tracking-label text-subtle">{clock.sessionLabel}</p>
-          <p className="truncate font-mono text-num text-fg">
-            {pair} <span className="tabular-nums text-mark leading-none">{mark ? G(mark) : "live"}</span>
-          </p>
+      <header className="phone-status flex items-center gap-2 border-b border-border bg-surface px-2.5">
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-mono text-kicker uppercase tracking-label text-subtle">{clock.sessionLabel}</p>
+          <div className="flex items-baseline gap-2">
+            <p className="min-w-0 truncate font-mono text-label text-muted">{pair}</p>
+            <p className="shrink-0 font-mono text-verdict tabular-nums leading-none text-fg">
+              {mark ? fitPx(mark) : "—"}
+            </p>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-0.5">
           <button
             type="button"
-            className={cn("h-9 rounded-sm px-2 font-mono text-kicker uppercase tracking-label", kzWatch ? "bg-elevated text-fg" : "text-muted")}
+            className={cn("h-9 rounded-sm px-1.5 font-mono text-kicker uppercase tracking-label", kzWatch ? "bg-elevated text-fg" : "text-muted")}
             onClick={() => setKzWatch(!kzWatch)}
           >
             Watch
           </button>
           <button
             type="button"
-            className={cn("h-9 rounded-sm px-2 font-mono text-kicker uppercase tracking-label", alarmOn ? "bg-elevated text-fg" : "text-muted")}
+            className={cn("h-9 rounded-sm px-1.5 font-mono text-kicker uppercase tracking-label", alarmOn ? "bg-elevated text-fg" : "text-muted")}
             onClick={() => {
               if (alarmOn) {
                 disableAlarms();
@@ -148,7 +151,7 @@ export function PhoneDesk({ onDesk }: { onDesk?: () => void }) {
           </button>
           <button
             type="button"
-            className="h-9 rounded-sm px-2 font-mono text-kicker uppercase tracking-label text-muted"
+            className="h-9 rounded-sm px-1.5 font-mono text-kicker uppercase tracking-label text-muted"
             onClick={() => onDesk?.()}
           >
             Desk
@@ -181,7 +184,9 @@ export function PhoneDesk({ onDesk }: { onDesk?: () => void }) {
         >
           {state === "in-trade" ? analysis?.verdict : state === "invalidated" ? "INVALID" : "STAND ASIDE"}
         </p>
-        <p className="min-w-0 truncate font-mono text-label text-muted">{statusCopy(state, analysis)}</p>
+        <p className="min-w-0 font-mono text-label leading-snug text-muted" style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+          {statusCopy(state, analysis)}
+        </p>
       </div>
 
       <section className="phone-sheet border-t border-border bg-surface">

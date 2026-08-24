@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
-import { G } from "@/lib/desk/format";
+import { fitPx } from "@/lib/desk/format";
 import { distPct, railChips } from "@/lib/desk/rail";
 import { useDesk } from "@/lib/desk/store";
 
 function copyPx(px: number) {
-  void navigator.clipboard?.writeText(G(px)).catch(() => undefined);
+  void navigator.clipboard?.writeText(fitPx(px)).catch(() => undefined);
 }
 
 function buzz(ms = 12) {
@@ -52,12 +52,9 @@ export function LevelsRail({
             window.addEventListener("pointerup", up);
           }}
         >
-          <span className="font-mono text-kicker tracking-label">
-            {c.label}
-            {c.filled ? " ·" : ""}
-          </span>
-          <span className="font-mono text-kicker tabular-nums">{G(c.px)}</span>
-          <span className={cn("font-mono text-kicker tabular-nums", c.pending ? "text-warn" : "text-muted")}>
+          <span className="rail-lab font-mono text-kicker uppercase">{c.label}{c.filled ? " ·" : ""}</span>
+          <span className="rail-px font-mono tabular-nums">{fitPx(c.px)}</span>
+          <span className={cn("rail-pct font-mono tabular-nums", c.pending ? "text-warn" : "text-muted")}>
             {distPct(c.px, mark)}%
           </span>
         </button>
