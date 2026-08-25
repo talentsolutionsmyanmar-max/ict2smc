@@ -16,6 +16,7 @@ import { ChartDrop, TranslateForm } from "./translate";
 import { Watchlist } from "./watchlist";
 import { MajorRadar } from "./radar";
 import { PhoneDesk } from "./phone";
+import { PhoneFeed } from "./signals";
 import { useDeskLayout } from "./layout";
 
 function AlarmFlash() {
@@ -144,6 +145,7 @@ export function DeskApp() {
   const view = useDesk((s) => s.view);
   const tape = useDesk((s) => s.tape);
   const analysis = useDesk((s) => s.analysis);
+  const phoneScreen = useDesk((s) => s.phoneScreen);
   const { layout, choose } = useDeskLayout();
 
   useEffect(() => {
@@ -152,7 +154,7 @@ export function DeskApp() {
 
   const subtitle = tape
     ? `${tape.symbol} ${tape.mark.toFixed(tape.mark >= 100 ? 2 : 3)} · OI ${fmtUsd(tape.oiUsd)} · ${tape.read.split(".")[0]}.${analysis ? ` ${analysis.verdict.replace("_", " ")} · ${analysis.window} · ${analysis.size}.` : ""}`
-    : "Adaptive kill-zone · live 15m · Override when structure is complete";
+    : "Adaptive kill-zone · live 15m · BTC/ETH primary only";
 
   return (
     <div className="bg-bg">
@@ -160,12 +162,12 @@ export function DeskApp() {
       <MajorRadar />
       <AutoRead />
       <TapePoller />
-      <PhoneDesk onDesk={() => choose("desk")} />
+      {phoneScreen === "feed" ? <PhoneFeed /> : <PhoneDesk onDesk={() => choose("desk")} />}
       <div className="desk-grid desk-only min-h-dvh bg-bg">
       <header className="border-b border-border bg-bg/90">
         <div className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4 px-4 py-5 md:px-6">
           <div>
-            <p className="font-mono text-micro uppercase tracking-label text-subtle">CasperSMC · kz-v2</p>
+            <p className="font-mono text-micro uppercase tracking-label text-subtle">CasperSMC · kz-v3</p>
             <h1 className="mt-1 text-2xl font-medium tracking-tight text-fg md:text-3xl">Casper Desk</h1>
             <p className="mt-1 text-sm text-muted">{subtitle}</p>
           </div>
