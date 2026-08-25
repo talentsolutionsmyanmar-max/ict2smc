@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Badge } from "./badge";
 import { cn } from "@/lib/utils";
-import { liveSide } from "@/lib/desk/regime";
+import { liveSide } from "@/lib/desk/live-row";
 import { loadWatchlist } from "@/lib/desk/load-tape";
 import { useDesk } from "@/lib/desk/store";
 import type { TickerRow } from "@/lib/desk/types";

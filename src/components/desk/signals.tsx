@@ -1,7 +1,7 @@
 import { Badge } from "./badge";
 import { cn } from "@/lib/utils";
 import { compactPair, fitPx } from "@/lib/desk/format";
-import { formatLiveHeadline, formatLiveNote, liveSide } from "@/lib/desk/regime";
+import { formatLiveHeadline, formatLiveNote, liveSide } from "@/lib/desk/live-row";
 import { useDesk } from "@/lib/desk/store";
 import type { RadarHit } from "@/lib/desk/types";
 
