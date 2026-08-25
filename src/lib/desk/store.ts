@@ -80,6 +80,7 @@ export type DeskState = {
   kzWatch: boolean;
   alarmOn: boolean;
   radar: RadarHit[];
+  phoneScreen: "feed" | "pair";
   kzAlerts: KzAlert[];
   lastScanCandle: number;
   llmCalls: number;
@@ -100,6 +101,7 @@ export type DeskState = {
   setKzWatch: (on: boolean) => void;
   setAlarmOn: (on: boolean) => void;
   setRadar: (rows: RadarHit[]) => void;
+  setPhoneScreen: (screen: "feed" | "pair") => void;
   pushKzAlert: (alert: KzAlert) => void;
   markScan: (closedAt: number, usedLlm: boolean) => void;
   hydrateHistory: () => void;
@@ -124,6 +126,7 @@ export const useDesk = create<DeskState>((set, get) => ({
   kzWatch: true,
   alarmOn: true,
   radar: [],
+  phoneScreen: "feed",
   kzAlerts: [],
   lastScanCandle: 0,
   llmCalls: 0,
@@ -131,7 +134,7 @@ export const useDesk = create<DeskState>((set, get) => ({
   riskBook: DEFAULT_RISK,
   setPair: (pair) => set({ pair }),
   selectPair: (pair) =>
-    set({ pair, analysis: null, error: null, tape: null, lastScanCandle: 0 }),
+    set({ pair, analysis: null, error: null, tape: null, lastScanCandle: 0, phoneScreen: "pair" }),
   setNotes: (notes) => set({ notes }),
   setView: (view) => set({ view }),
   setSlot: (tf, slot) => {
@@ -183,7 +186,16 @@ export const useDesk = create<DeskState>((set, get) => ({
     }
     set({ alarmOn: on });
   },
-  setRadar: (radar) => set({ radar }),
+  setRadar: (radar) =>
+    set({
+      radar: radar.map((h) => ({
+        ...h,
+        side: h.verdict === "LONG" || h.verdict === "SHORT" ? h.verdict : null,
+        entry: h.verdict === "STAND_ASIDE" ? "—" : h.entry,
+        stopLoss: h.verdict === "STAND_ASIDE" ? "—" : h.stopLoss,
+      })),
+    }),
+  setPhoneScreen: (phoneScreen) => set({ phoneScreen }),
   pushKzAlert: (alert) => {
     const kzAlerts = [alert, ...get().kzAlerts.filter((a) => a.id !== alert.id)].slice(0, 20);
     writeJson(ALERTS_KEY, kzAlerts);
