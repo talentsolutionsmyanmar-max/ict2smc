@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Badge } from "./badge";
 import { cn } from "@/lib/utils";
+import { liveSide } from "@/lib/desk/regime";
 import { loadWatchlist } from "@/lib/desk/load-tape";
 import { useDesk } from "@/lib/desk/store";
 import type { TickerRow } from "@/lib/desk/types";
@@ -41,8 +42,8 @@ export function Watchlist() {
       <div className="mb-3 flex items-baseline justify-between">
         <h2 className="text-sm font-medium text-fg">Majors radar</h2>
         <p className="font-mono text-micro uppercase tracking-label text-subtle">
-          {radar.filter((r) => r.verdict === "LONG" || r.verdict === "SHORT").length
-            ? `${radar.filter((r) => r.verdict === "LONG" || r.verdict === "SHORT").length} live`
+          {radar.filter((r) => liveSide(r.verdict)).length
+            ? `${radar.filter((r) => liveSide(r.verdict)).length} live`
             : "all pairs"}
         </p>
       </div>
@@ -53,7 +54,7 @@ export function Watchlist() {
           const active = pair.toUpperCase().includes(row.symbol);
           const up = row.changePct >= 0;
           const hit = radar.find((r) => r.pair.toUpperCase().startsWith(row.symbol));
-          const live = hit && (hit.verdict === "LONG" || hit.verdict === "SHORT");
+          const side = hit ? liveSide(hit.verdict) : null;
           return (
             <li key={row.symbol}>
               <button
@@ -67,8 +68,8 @@ export function Watchlist() {
                 <span className="font-mono text-sm">{row.symbol}</span>
                 <span className="flex items-baseline gap-2 font-mono text-sm tabular-nums">
                   {hit ? (
-                    <Badge tone={live ? (hit.verdict === "LONG" ? "long" : "short") : "neutral"}>
-                      {hit.verdict === "STAND_ASIDE" ? "ASIDE" : hit.verdict}
+                    <Badge tone={side === "LONG" ? "long" : side === "SHORT" ? "short" : "neutral"}>
+                      {side ?? "ASIDE"}
                     </Badge>
                   ) : null}
                   <span>{fmt(row.price)}</span>

@@ -139,6 +139,8 @@ export type RadarHit = {
   mark: number;
   changePct: number;
   verdict: Verdict;
+  /** Live side. Null when STAND_ASIDE — never default this to LONG. */
+  side: "LONG" | "SHORT" | null;
   size: SizeKind;
   riskPct: string;
   entry: string;
